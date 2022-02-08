@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FilmesApi.Data.Dtos.Endereco;
+using FilmesApi.Data.Dtos;
 using FilmesApi.Models;
 
-namespace FilmesApi.Profiles
+namespace FilmesAPI.Controllers
 {
     public class EnderecoProfile: Profile
     {
