@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UsuariosAPI.Data.Dtos.Usuarios
+namespace UsuariosApi.Data.Requests
 {
-    public class CreateUsuarioDto
+    public class EfetuaResetRequest
     {
-        [Required]
-        public string Username { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]
@@ -14,5 +12,7 @@ namespace UsuariosAPI.Data.Dtos.Usuarios
         [Required]
         [Compare("Senha")]
         public string ReSenha { get; set; }
+        [Required]
+        public string Token { get; set; }
     }
 }
