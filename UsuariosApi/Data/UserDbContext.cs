@@ -1,13 +1,50 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
+using UsuariosApi.Models;
 
 namespace UsuariosAPI.Data
 {
-    public class UserDbContext : IdentityDbContext<IdentityUser<int>, IdentityRole<int>, int>
+    public class UserDbContext : IdentityDbContext<CustomIdentityUser, IdentityRole<int>, int>
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
+        private IConfiguration _configuration;
+        public UserDbContext(DbContextOptions<UserDbContext> options, IConfiguration configuration) : base(options)
         {
+            _configuration = configuration;
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            CustomIdentityUser admin = new CustomIdentityUser
+            {
+                UserName = "admin",
+                NormalizedUserName = "ADMIN",
+                Email = "admin@email.com",
+                NormalizedEmail = "ADMIN@EMAIL.COM",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                Id = 9999
+            };
+
+            PasswordHasher<CustomIdentityUser> hasher = new PasswordHasher<CustomIdentityUser>();
+
+            admin.PasswordHash = hasher.HashPassword(admin, _configuration.GetValue<string>("admininfo:password"));
+
+            builder.Entity<CustomIdentityUser>().HasData(admin);
+            builder.Entity<IdentityRole<int>>().HasData(
+                new IdentityRole<int> { Id = 9999, Name = "admin", NormalizedName = "ADMIN" }
+            );
+            builder.Entity<IdentityRole<int>>().HasData(
+                new IdentityRole<int> { Id = 9998, Name = "regular", NormalizedName = "REGULAR" }
+            );
+
+            builder.Entity<IdentityUserRole<int>>().HasData(
+                new IdentityUserRole<int> { RoleId = 9999, UserId = 9999 }
+            );
 
         }
     }

@@ -8,7 +8,7 @@ using System.Web;
 using UsuariosApi.Data.Requests;
 using UsuariosAPI.Data;
 using UsuariosAPI.Data.Dtos.Usuarios;
-using UsuariosAPI.Models;
+using UsuariosApi.Models;
 
 namespace UsuariosApi.Services
 {
@@ -16,11 +16,11 @@ namespace UsuariosApi.Services
     {
         private UserDbContext _context;
         private IMapper _mapper;
-        private UserManager<IdentityUser<int>> _userManager;
+        private UserManager<CustomIdentityUser> _userManager;
         private EmailService _emailService;
         private RoleManager<IdentityRole<int>> _roleManager;
 
-        public CadastroService(UserDbContext context, IMapper mapper, UserManager<IdentityUser<int>> userManager, EmailService emailService, RoleManager<IdentityRole<int>> roleManager)
+        public CadastroService(UserDbContext context, IMapper mapper, UserManager<CustomIdentityUser> userManager, EmailService emailService, RoleManager<IdentityRole<int>> roleManager)
         {
             _context = context;
             _mapper = mapper;
@@ -32,12 +32,17 @@ namespace UsuariosApi.Services
         public Result CadastraUsuario(CreateUsuarioDto usuarioDto)
         {
             Usuario usuario = _mapper.Map<Usuario>(usuarioDto);
-            IdentityUser<int> identityUser = _mapper.Map<IdentityUser<int>>(usuario);
+            CustomIdentityUser identityUser = _mapper.Map<CustomIdentityUser>(usuario);
             Task<IdentityResult> resultIdentity = _userManager.CreateAsync(identityUser, usuarioDto.Senha);
-            var createRoleResult = _roleManager
-                .CreateAsync(new IdentityRole<int>("admin")).Result;
-            var usuarioRoleResult = _userManager
-                .AddToRoleAsync(identityUser, "admin").ToResult();
+
+            //adicionando uma role regular para todo usuario que for criado
+            _userManager.AddToRoleAsync(identityUser, "regular");
+
+            //criação de usuario admin e role admin de uma maneira não eficiente
+            //var createRoleResult = _roleManager
+            //    .CreateAsync(new IdentityRole<int>("admin")).Result;
+            //var usuarioRoleResult = _userManager
+            //    .AddToRoleAsync(identityUser, "admin").ToResult();
 
             if (resultIdentity.Result.Succeeded)
             {

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UsuariosApi.Services;
 using UsuariosAPI.Data;
+using UsuariosApi.Models;
 
 namespace UsuariosApi
 {
@@ -34,7 +35,7 @@ namespace UsuariosApi
                 options.UseMySQL(Configuration.GetConnectionString("UsuarioConnection"))
             );
 
-            services.AddIdentity<IdentityUser<int>, IdentityRole<int>>(
+            services.AddIdentity<CustomIdentityUser, IdentityRole<int>>(
                  opt => opt.SignIn.RequireConfirmedEmail = true
                 )
                 .AddEntityFrameworkStores<UserDbContext>()

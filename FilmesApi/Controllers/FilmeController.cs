@@ -37,6 +37,7 @@ namespace FilmesAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin, regular", Policy = "idadeMinima")]
         public IActionResult RecuperaFilmes([FromQuery] int? faixaEtaria)
         {
             List<Filme> filmes;

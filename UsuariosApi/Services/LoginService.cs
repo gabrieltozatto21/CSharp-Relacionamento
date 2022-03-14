@@ -9,10 +9,10 @@ namespace UsuariosApi.Services
 {
     public class LoginService
     {
-        private SignInManager<IdentityUser<int>> _signInManager;
+        private SignInManager<CustomIdentityUser> _signInManager;
         private TokenService _tokenService;
 
-        public LoginService(SignInManager<IdentityUser<int>> signInManager, TokenService tokenService)
+        public LoginService(SignInManager<CustomIdentityUser> signInManager, TokenService tokenService)
         {
             _signInManager = signInManager;
             _tokenService = tokenService;
@@ -39,7 +39,7 @@ namespace UsuariosApi.Services
 
         public Result SolicitaResetSenhaUsuario(SolicitaSenhaRequest request)
         {
-            IdentityUser<int> usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
+            CustomIdentityUser usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
 
             if (usuarioIdentity != null)
             {
@@ -55,7 +55,7 @@ namespace UsuariosApi.Services
 
         public Result ResetaSenhaUsuario(EfetuaResetRequest request)
         {
-            IdentityUser<int> usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
+            CustomIdentityUser usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
 
             IdentityResult resultadoIdentity = _signInManager
                 .UserManager
@@ -66,7 +66,7 @@ namespace UsuariosApi.Services
             return Result.Fail("Houve um erro na operaçã!");
         }
 
-        private IdentityUser<int> RecuperaUsuarioPorEmail(string email)
+        private CustomIdentityUser RecuperaUsuarioPorEmail(string email)
         {
             return _signInManager
                             .UserManager
